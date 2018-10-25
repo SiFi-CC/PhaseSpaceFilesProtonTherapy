@@ -1,0 +1,31 @@
+###############################################################################################################################################################
+#
+################## Sets some default verbose
+#
+/control/verbose 2
+/control/saveHistory
+/run/verbose 2
+#
+################## analysis specifications
+#
+################## HITSetup specific
+#change Setup variables
+#
+/HITSetUp/target/setWedgeMaterial PMMA          #options: PMMA, POM, Graphite (default), G4_AIR, Vacuum
+/HITSetUp/target/setWedgeThickness 32 mm        #options: 0.2 mm to 20 cm
+/HITSetUp/target/setWedgeOffset 8.8 mm          #options: 0 mm to 160 mm (default 8.8 mm)
+#
+/HITSetUp/target/setSliceMaterial PMMA          #options: PMMA, POM, Graphite (default), G4_AIR, Vacuum
+/HITSetUp/target/setSliceThickness 1 mm         #options: 0 mm to 50 mm (default 1 mm)
+#
+/HITSetUp/setNozzletoWedge 35 cm                #options: 0 mm to 3 m (default 35 cm)
+/HITSetUp/setWedgetoSlice 22.5 cm               #options: 125 mm to 3 m (default 22.5 cm)
+/HITSetUp/UpdateGeometry
+#
+#
+################### HIT source specifications
+/HITRun/PhaseSpace/SetPhaseSpaceFile 21001_PHASEAP	#options: 103001_PHASEAP, 103001_PHASESP, 103RiFi001_PHASEAP,103RiFi001_PHASESP, 21001_PHASEAP(default), 21001_PHASESP
+/HITRun/PhaseSpace/SetInitialProton 500000                 #options: 0 to 10000000
+#
+################### turn on protonbeam
+/run/beamOn 100000

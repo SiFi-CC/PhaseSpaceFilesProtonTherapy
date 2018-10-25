@@ -1,0 +1,29 @@
+####################Sets some default verbose
+#
+/control/verbose 2
+/control/saveHistory
+/run/verbose 2
+#
+/control/execute macros/Viewer.mac
+#
+#/vis/scene/add/axes 0 0 0 500 mm
+/vis/viewer/set/style s
+#
+#
+################### Visualization commands
+/tracking/storeTrajectory 1
+/vis/scene/add/trajectories
+/vis/scene/endOfEventAction accumulate
+/vis/scene/endOfRunAction accumulate
+
+#/vis/modeling/trajectories/create/drawByParticleID
+#/vis/modeling/trajectories/drawByParticleID-0/set gamma green
+#/vis/modeling/trajectories/drawByParticleID-0/set neutron magenta
+#
+#
+################### source specifications
+/HITRun/PhaseSpace/SetPhaseSpaceFile 103001_PHASEAP #103001_PHASEAP #103RiFi001_PHASEAP #21001_PHASEAP
+/HITRun/PhaseSpace/SetInitialProton 1
+#
+
+/run/beamOn 100

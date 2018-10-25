@@ -1,0 +1,20 @@
+###############################################################################################################################################################
+#
+################## Sets some default verbose
+#
+/control/verbose 2
+/control/saveHistory
+/run/verbose 2
+#
+################## analysis specifications
+#
+################## HITSetup specific
+#change Setup variables
+#
+#
+################### HIT source specifications
+/HITRun/PhaseSpace/SetPhaseSpaceFile 103001_PHASEAP	#options: 103001_PHASEAP, 103001_PHASESP, 103RiFi001_PHASEAP,103RiFi001_PHASESP, 21001_PHASEAP(default), 21001_PHASESP
+/HITRun/PhaseSpace/SetInitialProton 2                #options: 0 to 10000000
+#
+################### turn on protonbeam
+/run/beamOn 10000
