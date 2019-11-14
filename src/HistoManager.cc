@@ -19,12 +19,13 @@ extern G4String TrackInfo;
 HistoManager::HistoManager(DetectorConstruction* dec)
 	:construction(dec),
 	rootFile(0),
-	ParticlePDGcode(0),
-	ParticleEnergie(0),
 	Primaries(0)  
-{   // histograms
-	ParticlePosition = new TVector3(0,0,0);
-	ParticleMomentum = new TVector3(0,0,0);
+{   
+	ParticlePosition = new std::vector<TVector3>;
+	ParticleMomentum =  new std::vector<TVector3>;
+	ParticlePDGcode=  new std::vector<int>;
+	ParticleEnergy =  new std::vector<double>;
+	ParticleTime =  new std::vector<double>;
 	PPlace = new TVector3(0,0,0);
 	PDim = new TVector3(0,0,0);
 }
@@ -68,21 +69,13 @@ void HistoManager::book(G4int runNb)
 	Info->Branch("PhantomPlace"     , &PPlace ); 
 	Info->Branch("PhantomDimensions"     , &PDim ); 
 
-	Gamma = new TTree("Gammas", "Gammas in the Phantom");
-	Gamma->Branch("ParticleEnergie"     , &ParticleEnergie  , "ParticleEnergie/D");
-	Gamma->Branch("ParticlePosition"     , &ParticlePosition  ); 
-	Gamma->Branch("ParticleMomentum"     , &ParticleMomentum ); 
+	Secondaries = new TTree("Secondaries", "Particle in the Phantom");
+	Secondaries->Branch("ParticleID"     , &ParticlePDGcode  );
+	Secondaries->Branch("ParticleTime"     , &ParticleTime);
+	Secondaries->Branch("ParticleEnergy"     , &ParticleEnergy  );
+	Secondaries->Branch("ParticlePosition"     , &ParticlePosition  ); 
+	Secondaries->Branch("ParticleMomentum"     , &ParticleMomentum ); 
 	
-	Neutron = new TTree("Neutron", "Neutron in the Phantom");
-	Neutron->Branch("ParticleEnergie"     , &ParticleEnergie  , "ParticleEnergie/D");
-	Neutron->Branch("ParticlePosition"     , &ParticlePosition  ); 
-	Neutron->Branch("ParticleMomentum"     , &ParticleMomentum ); 
-	
-	Else = new TTree("ElseParticle", "All other ParticlAll other Particlee Phantom");
-	Else->Branch("ParticlePDGcode"   , &ParticlePDGcode   , "ParticlePDGcode/I");
-	Else->Branch("ParticleEnergie"     , &ParticleEnergie  , "ParticleEnergie/D");
-	Else->Branch("ParticlePosition"     , &ParticlePosition  ); 
-	Else->Branch("ParticleMomentum"     , &ParticleMomentum ); 
 #endif
 	PPlace->SetXYZ(construction->getPhantomPlace()->x(),construction->getPhantomPlace()->y(),construction->getPhantomPlace()->z());
 	PDim= construction->getPhantomDimensions();
@@ -97,7 +90,7 @@ void HistoManager::save()
 	if (rootFile) {
 		Info->Fill();
 
-		rootFile->Write();       // Writing the histograms to the file
+		rootFile->Write(0,TObject::kOverwrite);       // Writing the histograms to the file
 
 		rootFile->Close();        // and closing the tree (and the file)
 
@@ -108,16 +101,14 @@ void HistoManager::save()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 
-void HistoManager::SaveSecondary(G4int PDGcode, G4double Ekin, TVector3* pos, TVector3*  dir){
+void HistoManager::SaveSecondaries(std::vector<G4int>* PDGcode, std::vector<G4double>* Ekin, std::vector<G4double>* Time, std::vector<TVector3>* pos, std::vector<TVector3>*  dir){
 #ifdef G4ANALYSIS_USE
 	ParticlePDGcode = PDGcode;
-	ParticleEnergie = Ekin/MeV;
+	ParticleEnergy = Ekin;
+	ParticleTime= Time;
 	ParticlePosition= pos;
     	ParticleMomentum= dir;
-	if (ParticlePDGcode == 22) Gamma->Fill();
-	else if (ParticlePDGcode == 2112) Neutron->Fill();
-	//else Else->Fill();
-    
+	Secondaries->Fill();
 #endif 
 }
 

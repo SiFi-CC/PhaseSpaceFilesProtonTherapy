@@ -38,15 +38,13 @@ DetectorConstruction::DetectorConstruction()
 :logicWorld(0),physicWorld(0),logicalPhantom(0),physicalPhantom(0)
 
 {   //changable variables in SetUp
-	dist_NozzletoWedge		= 5.*cm;
-
-	PhantomThicknessX	= 10.*cm;	
-	PhantomThicknessY	= 10.*cm;	
+	PhantomThicknessX	= 6.*cm;	
+	PhantomThicknessY	= 6.*cm;	
 	PhantomThicknessZ	= 30.*cm;	
 
 	PhantomPlaceX	= 0.*cm;	
 	PhantomPlaceY	= 0.*cm;	
-	PhantomPlaceZ	= 50.*cm;	
+	PhantomPlaceZ	= 0.*cm;	
 
 	detectorMessenger = new DetectorMessenger(this);
 }
@@ -119,9 +117,9 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	// World
 	//
 
-	G4double           WorldSizeX = 5 *m;
-	G4double           WorldSizeY = 3 *m;
-	G4double           WorldSizeZ = 10 *m;
+	G4double           WorldSizeX = 1 *m;
+	G4double           WorldSizeY = 1 *m;
+	G4double           WorldSizeZ = 1 *m;
 
 	G4Box* solidWorld = new G4Box("solidsWorld",				//its name
 			WorldSizeX/2,WorldSizeY/2,WorldSizeZ/2);//its size
@@ -143,10 +141,6 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 
 	G4Box* solidPhantom = new G4Box("solidPhantom",PhantomThicknessX/2,PhantomThicknessY/2,PhantomThicknessZ/2);
 
-	//Placement Fixed Wedge
-	 PhantomPlaceZ = dist_NozzletoWedge +PhantomThicknessZ/2.;
-
-
 	//construct
 	logicalPhantom = new G4LogicalVolume(solidPhantom,MaterialPhantom,"logicalPhantom");	//default Material is PMMA 
 
@@ -159,7 +153,6 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 
 	// Register Sensitive Detector to Geant4.
 	G4SDManager::GetSDMpointer()->AddNewDetector(phsd);
-			//}
 	logicalPhantom->SetSensitiveDetector(phsd);
 
 	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...

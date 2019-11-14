@@ -22,11 +22,12 @@ class SPSEventAction : public G4UserEventAction{
 	private:
 		HistoManager* dataManager;
 		
-    		G4int EventNo;    
-    		G4double Energy;
-    		TVector3* Position;
-    		TVector3* Momentum;
-		G4int particleID;
+    		int EventNo;    
+    		std::vector<double>* Energy;
+    		std::vector<double>* Time;
+    		std::vector<TVector3>* Position;
+    		std::vector<TVector3>* Momentum;
+		std::vector<int>* particleID;
 };
 
 #endif

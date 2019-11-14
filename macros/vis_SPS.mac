@@ -22,8 +22,7 @@
 #
 #
 ################### source specifications
-/HITRun/PhaseSpace/SetPhaseSpaceFile 103001_PHASEAP #103001_PHASEAP #103RiFi001_PHASEAP #21001_PHASEAP
-/HITRun/PhaseSpace/SetInitialProton 1
-#
+/control/execute macros/Run180MeV.mac
 
-/run/beamOn 100
+
+#/run/beamOn 100

@@ -31,7 +31,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* myDet)
 	PhantomThicknessCmd->SetGuidance("double and unit must be a length in range (0.2,200)mm");
 	PhantomThicknessCmd->SetParameterName("PhantomThick",false,false);
 	PhantomThicknessCmd->SetUnitCategory("Length");
-	PhantomThicknessCmd->SetRange("PhantomThick>0.2 && PhantomThick<200.");
+	PhantomThicknessCmd->SetRange("PhantomThick>0.2 && PhantomThick<799.");
 	PhantomThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	//------------------------------    

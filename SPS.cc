@@ -119,7 +119,7 @@ int main(int argc,char** argv) {
 	//G4VUserPhysicsList* the_physics = new PhysicsList;
 	//runManager->SetUserInitialization(the_physics);  
 	G4PhysListFactory factory;
-	G4VModularPhysicsList* physlist = factory.GetReferencePhysList("QGSP_BIC_EMY");
+	G4VModularPhysicsList* physlist = factory.GetReferencePhysList("QGSP_BIC_HP_EMZ");
 	runManager->SetUserInitialization(physlist);
 
 	PrimaryGeneratorAction *primarygeneration = new PrimaryGeneratorAction();

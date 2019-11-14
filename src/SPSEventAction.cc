@@ -15,12 +15,13 @@
 #include "HistoManager.hh"
 
 SPSEventAction::SPSEventAction(HistoManager* histo):dataManager(histo),
-Energy(0),
-EventNo(0),   
-particleID(-1)
+EventNo(0)   
 {	
-	Position = new TVector3(0,0,0);
-	Momentum= new TVector3(0,0,0);
+	Energy= new std::vector<double>;
+	Time= new std::vector<double>;
+	particleID=new std::vector<int>;
+	Position = new std::vector<TVector3>;
+	Momentum = new std::vector<TVector3>;
 }
 
 SPSEventAction::~SPSEventAction() {
@@ -28,10 +29,12 @@ SPSEventAction::~SPSEventAction() {
 
 void SPSEventAction::BeginOfEventAction(const G4Event* evt) {
 	EventNo=GetEventno();
-	Energy=0;
-	particleID=-1;
-	Position = new TVector3(0,0,0);
-	Momentum = new TVector3(0,0,0);
+//	std::cout << "Event no " << EventNo << std::endl;
+	Energy->clear();
+	Time->clear();
+	particleID->clear();
+	Position->clear();
+	Momentum->clear();
 	dataManager->IncreasePrimaries();
 }
 
@@ -55,15 +58,14 @@ void SPSEventAction::EndOfEventAction(const G4Event* evt) {
 			if (SHC){
 
 				int phantom_hit = SHC->entries();
-				for (G4int i=0;i<phantom_hit;i++)
-				{
-					Energy = (*SHC)[i]->GetEkin();
-					particleID = (*SHC)[i]->GetParticleID();
-					Position = (*SHC)[i]->GetPosition();
-					Momentum = (*SHC)[i]->GetMomentum();
-					
-					dataManager->SaveSecondary(particleID,Energy,Position,Momentum);
+				for (G4int i=0;i<phantom_hit;i++){
+					Energy->push_back((*SHC)[i]->GetEkin());
+					Time->push_back((*SHC)[i]->GetTime());
+					particleID->push_back((*SHC)[i]->GetParticleID());
+					Position->push_back((*SHC)[i]->GetPosition());
+					Momentum->push_back((*SHC)[i]->GetMomentum());
 				}
+				if(phantom_hit!=0)dataManager->SaveSecondaries(particleID,Energy,Time,Position,Momentum);
 			}
 
 
