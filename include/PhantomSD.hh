@@ -29,7 +29,7 @@ public:
 	virtual void Initialize(G4HCofThisEvent* hCof);
         virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* roHist);
         virtual void   EndOfEvent(G4HCofThisEvent* hitCollection);
-        PhantomHit* createHit(G4Step* step);
+        PhantomHit* createHit(G4Track* track);
 
         private:
     	PhantomHitsCollection*  PhantomCollection;
