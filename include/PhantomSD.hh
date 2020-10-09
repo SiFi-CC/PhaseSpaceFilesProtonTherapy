@@ -5,10 +5,6 @@
 
 #include <G4VSensitiveDetector.hh>
 #include <globals.hh>
-#include <G4HadronicInteractionRegistry.hh>
-#include <G4VPreCompoundModel.hh>
-#include <G4ExcitationHandler.hh>
-#include <G4PhotonEvaporation.hh>
 
 class EPConstruction;
 class G4HCofThisEvent;
@@ -36,9 +32,6 @@ public:
 	
 	std::vector<G4Track*>* secondaries;
 
-        G4PhotonEvaporation* photoev;
-
-	std::map<G4double,std::pair<G4int,G4int>> translevel;
 };
 
 #endif
