@@ -32,12 +32,17 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 		//***********  World
 
 		G4LogicalVolume*   logicWorld;    
-		G4VPhysicalVolume* physicWorld; 
+		G4VPhysicalVolume* physicWorld;
 
 
 		//*********** Phantom 
 		G4LogicalVolume* logicalPhantom;
 		G4VPhysicalVolume* physicalPhantom;
+		
+		//********** Cylinder
+         
+         G4LogicalVolume* logicalCylinder;
+         G4VPhysicalVolume* physicalCylinder;
 
 
 		//***********  Material
@@ -64,6 +69,12 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 		G4double PhantomPlaceX;
 		G4double PhantomPlaceY;
 		G4double PhantomPlaceZ;
+		
+		G4double CylinderRMin; 
+        G4double CylinderRMax; 
+        G4double CylinderLz;  
+        G4double CylinderPhiS;
+        G4double CylinderPhiE; 
 
 	private:
 
