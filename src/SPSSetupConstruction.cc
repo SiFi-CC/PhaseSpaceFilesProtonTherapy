@@ -10,6 +10,7 @@
 #include "G4SDManager.hh"
 
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -35,7 +36,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction()
-:logicWorld(0),physicWorld(0),logicalPhantom(0),physicalPhantom(0)
+:logicWorld(0),physicWorld(0),logicalPhantom(0),physicalPhantom(0),logicalCylinder(0), physicalCylinder(0)
 
 {   //changable variables in SetUp
 	PhantomThicknessX	= 6.*cm;	
@@ -44,7 +45,15 @@ DetectorConstruction::DetectorConstruction()
 
 	PhantomPlaceX	= 0.*cm;	
 	PhantomPlaceY	= 0.*cm;	
-	PhantomPlaceZ	= 0.*cm;	
+	PhantomPlaceZ	= 0.*cm;
+	
+   CylinderRMin =   25.*cm;
+   CylinderRMax =  25.01*cm;
+   CylinderLz   =  100.*cm;
+   CylinderPhiS =   0.*deg;
+   CylinderPhiE = 360.*deg;	
+   
+
 
 	detectorMessenger = new DetectorMessenger(this);
 }
@@ -137,6 +146,23 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 
 	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
 
+	
+	//Cylinder
+	
+
+  G4Tubs* solidCylinder = new G4Tubs("solidCylinder", CylinderRMin, CylinderRMax, CylinderLz/2, CylinderPhiS, CylinderPhiE);
+  
+  logicalCylinder = new G4LogicalVolume(solidCylinder, mat_Air, "logicalCylinder");   // its solid, defaultMaterial, name
+
+  physicalCylinder =
+                                 new G4PVPlacement(0,			               // no rotation
+  							     G4ThreeVector(0,0,0.*cm),                    // at (0,0,0)
+							     "physicalCylinder",                         // its name
+							     logicalCylinder,                           // its logical volume
+							     physicWorld,	                           // its mother  volume
+							     false,		                              // not used
+							     0);		                             // copy number
+	
 	//Phantom 
 
 	G4Box* solidPhantom = new G4Box("solidPhantom",PhantomThicknessX/2,PhantomThicknessY/2,PhantomThicknessZ/2);
@@ -145,15 +171,15 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	logicalPhantom = new G4LogicalVolume(solidPhantom,MaterialPhantom,"logicalPhantom");	//default Material is PMMA 
 
 
-	physicalPhantom = new G4PVPlacement(0,G4ThreeVector(PhantomPlaceX,PhantomPlaceY,PhantomPlaceZ),"Phantom",logicalPhantom,physicWorld,false,0);
+	physicalPhantom = new G4PVPlacement(0,G4ThreeVector(PhantomPlaceX,PhantomPlaceY,PhantomPlaceZ),"Phantom", logicalPhantom, physicWorld,false,0);
 
 
-	PhantomSD* phsd = new PhantomSD("PhantomSD","PhantomHits");
+	PhantomSD* phsd = new PhantomSD("PhantomSD","Phantom2Hits"); 
 
 
 	// Register Sensitive Detector to Geant4.
 	G4SDManager::GetSDMpointer()->AddNewDetector(phsd);
-	logicalPhantom->SetSensitiveDetector(phsd);
+	logicalCylinder->SetSensitiveDetector(phsd);
 
 	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
 	/*Visualization
@@ -161,25 +187,27 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	 */
 	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
 	// Visualization attributes
-	G4VisAttributes * metal       = new G4VisAttributes( G4Colour(204/255. ,204/255. ,255/255.));
-	G4VisAttributes * bleuCiel    = new G4VisAttributes( G4Colour(0/255. , 204/255. , 204/255.));
-	G4VisAttributes * red         = new G4VisAttributes( G4Colour(255/255., 0/255., 0/255.));
-	G4VisAttributes * roux        = new G4VisAttributes( G4Colour(204/255., 0/255., 51/255. ));
+	//G4VisAttributes * metal       = new G4VisAttributes( G4Colour(204/255. ,204/255. ,255/255.));
+	//G4VisAttributes * bleuCiel    = new G4VisAttributes( G4Colour(0/255. , 204/255. , 204/255.));
+	//G4VisAttributes * red         = new G4VisAttributes( G4Colour(255/255., 0/255., 0/255.));
+	//G4VisAttributes * roux        = new G4VisAttributes( G4Colour(204/255., 0/255., 51/255. ));
 	G4VisAttributes * yellow      = new G4VisAttributes( G4Colour(255/255., 255/255., 0/255.));
-	G4VisAttributes * green       = new G4VisAttributes( G4Colour(0/255., 255/255., 0/255.));
-	G4VisAttributes * Lgreen      = new G4VisAttributes( G4Colour(153/255. ,255/255. ,153/255.));
-	G4VisAttributes * Lbrown       = new G4VisAttributes (G4Colour(0.5,0.5,0.1));
-	G4VisAttributes * brown       = new G4VisAttributes (G4Colour(0.7,0.4,0.1));
+	//G4VisAttributes * green       = new G4VisAttributes( G4Colour(0/255., 255/255., 0/255.));
+	//G4VisAttributes * Lgreen      = new G4VisAttributes( G4Colour(153/255. ,255/255. ,153/255.));
+	//G4VisAttributes * Lbrown       = new G4VisAttributes (G4Colour(0.5,0.5,0.1));
+	//G4VisAttributes * brown       = new G4VisAttributes (G4Colour(0.7,0.4,0.1));
 	G4VisAttributes * darkGrey    = new G4VisAttributes (G4Colour(0.6,0.6,0.6));
-	G4VisAttributes * white       = new G4VisAttributes (G4Colour(1,1,1));
-	G4VisAttributes * purple      = new G4VisAttributes (G4Colour(0.63, 0.13, 0.94));	
-	G4VisAttributes * blue      = new G4VisAttributes (G4Colour(0, 0, 1));
+	//G4VisAttributes * white       = new G4VisAttributes (G4Colour(1,1,1));
+	//G4VisAttributes * purple      = new G4VisAttributes (G4Colour(0.63, 0.13, 0.94));	
+	//G4VisAttributes * blue      = new G4VisAttributes (G4Colour(0, 0, 1));
 
 	//World
 	logicWorld->SetVisAttributes (G4VisAttributes::Invisible);
 	//logicWorld->SetVisAttributes(bleuCiel);
 
 	logicalPhantom ->SetVisAttributes(yellow);
+	logicalCylinder->SetVisAttributes (darkGrey);
+	
 
 
 	return physicWorld;
@@ -240,3 +268,4 @@ TVector3* DetectorConstruction::getPhantomPlace()
 	TVector3* place = new TVector3(PhantomPlaceX,PhantomPlaceY,PhantomPlaceZ);
 	return place;
 }
+
