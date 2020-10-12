@@ -36,7 +36,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction()
-:logicWorld(0),physicWorld(0),logicalPhantom(0),physicalPhantom(0),logicalCylinder(0), physicalCylinder(0)
+:logicWorld(0),physicWorld(0),logicalPhantom(0),physicalPhantom(0),logicalCylinder(0),physicalCylinder(0)
 
 {   //changable variables in SetUp
 	PhantomThicknessX	= 6.*cm;	
@@ -161,7 +161,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 							     logicalCylinder,                           // its logical volume
 							     physicWorld,	                           // its mother  volume
 							     false,		                              // not used
-							     0);		                             // copy number
+							     0);		                             // copy number 
 	
 	//Phantom 
 
@@ -205,7 +205,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	logicWorld->SetVisAttributes (G4VisAttributes::Invisible);
 	//logicWorld->SetVisAttributes(bleuCiel);
 
-	logicalPhantom ->SetVisAttributes(yellow);
+	logicalPhantom ->SetVisAttributes (yellow);
 	logicalCylinder->SetVisAttributes (darkGrey);
 	
 
