@@ -207,7 +207,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 
 	logicalPhantom ->SetVisAttributes (yellow);
 	logicalCylinder->SetVisAttributes (darkGrey);
-	
+
 
 
 	return physicWorld;
