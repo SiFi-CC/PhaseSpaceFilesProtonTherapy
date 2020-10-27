@@ -1,0 +1,37 @@
+# Condor job description file (argument to condor_submit)
+
+# Not specifying 'output' and 'error' sends stdout and stderr
+# to /dev/null by default, so file handles on NFS are avoided.
+# To catch the output anyway and write it to local (non-NFS) path, redirect in executable script.
+
+# vanilla universe not compiled with condor_compile for binaries, no checkpointing (stopping/restarting) 
+# if jobs are stopped, they start over from the beginning
+universe     = vanilla
+
+# Pass on local environment, such that PATH and LD_LIBRARY_PATH are set correctly; however, $HOSTNMAME is wrong on remote machines then, taking care of this in executable shell script.
+getenv       = true
+
+# bash shell script starts actual program, copies output data and logs to home dir
+executable   = $ENV(HOME)/geant4_workdir/bin/SPS/condor_run_PSF_9mm.bash
+
+# Send condor job number and process id to each job for file naming
+arguments    = $(CLUSTER) $(PROCESS) 
+
+# Global log file is to be kept locally (non-NFS)
+# only on submitting machine
+log          = /user/kasper/CondorLogSimulation/condor-$(CLUSTER).log
+
+# lx1b00 was identified as trouble maker
+# Memory >= 950 means that only machines with sufficient amount of memory are used
+requirements = Machine != "lx1b00.physik.rwth-aachen.de"
+requirements = Machine != "lx3b88.physik.rwth-aachen.de"
+requirements = Machine != "lxcip59.physik.rwth-aachen.de"
+
+request_memory=700
+
+rank = Memory
+
+notification = error
+# Number of jobs you are going to submit
+queue 2000
+

@@ -1,0 +1,6 @@
+
+/control/execute Run180MeV.mac
+
+/SPSSetUp/setPhantomThickness 368.2 mm
+
+/run/beamOn 200000 
