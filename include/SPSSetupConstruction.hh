@@ -26,7 +26,12 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 		TVector3* getPhantomPlace();
 		void setPhantomMaterial(G4String);
 		void UpdateGeometry();
-
+                void SetPDGcode(G4int);
+  
+        public:
+           
+           G4Material* GetMaterial(){return material;};
+          
 	private:
 
 		//***********  World
@@ -43,14 +48,22 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 		//***********  Material
 		G4Material* Vacuum;
 		G4Material* mat_Air;
+                G4Material* material;
 
 
 		G4Material* mat_Graphite;
 		G4Material* mat_PMMA;
 		G4Material* mat_POM;
+                
 		
 		G4Material* MaterialPhantom; //pointer to Phantom Material (default mat_PMMA)
-
+                G4Material* TracerMaterial_Ca;
+                G4Material* TracerMaterial_Mg;
+                G4Material* TracerMaterial_Fe;
+                G4Material* Tracer1;
+                G4Material* Tracer2;
+                G4Material* Tracer3;
+  
 
 		DetectorMessenger* detectorMessenger;
 
@@ -64,6 +77,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 		G4double PhantomPlaceX;
 		G4double PhantomPlaceY;
 		G4double PhantomPlaceZ;
+
+                G4int pdgCode;
 
 	private:
 

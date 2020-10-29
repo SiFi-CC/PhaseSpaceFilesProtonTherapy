@@ -32,6 +32,10 @@
 #include "TVector3.h"
 
 #include "PhantomSD.hh"
+#include "G4SDParticleFilter.hh"
+#include "G4VPrimitiveScorer.hh"
+#include "G4MultiFunctionalDetector.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction()
@@ -74,8 +78,8 @@ void DetectorConstruction::DefineMaterials()
 
 	G4String name, symbol;        
 	G4double A, Z, density;           
-	G4double temperature, pressure;
-	G4int natoms;
+	G4double temperature, pressure, fractionmass;
+	G4int natoms, ncomps;
 
 	// Vaccum material
 	name        = "Vacuum";
@@ -97,11 +101,53 @@ void DetectorConstruction::DefineMaterials()
 	mat_Graphite = nman->BuildMaterialWithNewDensity("Graphite","G4_C",1.74*g/cm3);
 	mat_PMMA = nman->BuildMaterialWithNewDensity("PMMA","G4_PLEXIGLASS",1.19*g/cm3);
 	mat_POM = nman->BuildMaterialWithNewDensity("POM","G4_POLYOXYMETHYLENE",1.43 *g/cm3);
+	
+
+
+
+	//Tracer Candidates
+	//Calcium
+	G4Element* Ca = new G4Element("Element_Calcium", "Ca", 20, 40.078*g/mole);
+	G4Material* matCa = new G4Material("Calcium", 1.55*g/cm3, 1, kStateSolid, 293.15*kelvin, 1.*atmosphere);
+	matCa->AddElement(Ca, 1);
+
+	//Magnesium
+	G4Element* Mg = new G4Element("Element_Magnesium", "Mg",12, 24.305*g/mole);
+	G4Material* matMg = new G4Material("Magnesium", 1.738*g/cm3, 1, kStateSolid, 293.15*kelvin, 1.*atmosphere);
+	matMg->AddElement(Mg, 1);
+
+	//Iron
+	G4Element* Fe = new G4Element("Element_Iron", "Fe", 26, 55.845*g/mole);
+	G4Material* matFe = new G4Material("Iron", 7.87*g/cm3, 1, kStateSolid, 293.15*kelvin, 1.*atmosphere);
+	matFe->AddElement(Fe, 1);
+
+	//Tracer materials
+	//Mixture Calcium & PMMA
+        G4Material* Tracer_Ca = new G4Material("Tracer_Ca", 1.37*g/cm3, ncomps = 2);
+	Tracer_Ca->AddMaterial(mat_PMMA, fractionmass = 0.9);
+	Tracer_Ca->AddMaterial(matCa, fractionmass = 0.1);
+
+	//Mixture Magnesium & PMMA
+	G4Material* Tracer_Mg = new G4Material("Tracer_Mg", 1.464*g/cm3, ncomps = 2);
+	Tracer_Mg->AddMaterial(mat_PMMA, fractionmass = 0.88);
+	Tracer_Mg->AddMaterial(matMg, fractionmass = 0.12);
+
+	//Mixture Iron & PMMA
+	G4Material* Tracer_Fe = new G4Material("Tracer_Fe", 4.53*g/cm3, ncomps = 2);
+	Tracer_Fe->AddMaterial(mat_PMMA, fractionmass = 0.99);
+	Tracer_Fe->AddMaterial(matFe, fractionmass = 0.01);
 
 	G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-
+	
 	//variable materials accessed by macro commands are set to default here
 	MaterialPhantom= mat_PMMA;
+	TracerMaterial_Ca = matCa;
+	TracerMaterial_Mg = matMg;
+	TracerMaterial_Fe = matFe;
+	Tracer1 = Tracer_Ca;
+	Tracer2 = Tracer_Mg;
+	Tracer3 = Tracer_Fe;
+        
 }
 
 
@@ -142,18 +188,25 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	G4Box* solidPhantom = new G4Box("solidPhantom",PhantomThicknessX/2,PhantomThicknessY/2,PhantomThicknessZ/2);
 
 	//construct
-	logicalPhantom = new G4LogicalVolume(solidPhantom,MaterialPhantom,"logicalPhantom");	//default Material is PMMA 
+	logicalPhantom = new G4LogicalVolume(solidPhantom,TracerMaterial_Fe,"logicalPhantom");	//default Material is PMMA 
 
 
 	physicalPhantom = new G4PVPlacement(0,G4ThreeVector(PhantomPlaceX,PhantomPlaceY,PhantomPlaceZ),"Phantom",logicalPhantom,physicWorld,false,0);
 
 
 	PhantomSD* phsd = new PhantomSD("PhantomSD","PhantomHits");
-
-
-	// Register Sensitive Detector to Geant4.
+      
 	G4SDManager::GetSDMpointer()->AddNewDetector(phsd);
+	// Register Sensitive Detector to Geant4.
 	logicalPhantom->SetSensitiveDetector(phsd);
+
+	//G4MultiFunctionalDetector* fdetector = new G4MultiFunctionalDetector("fdetector");
+	//G4SDManager::GetSDMpointer()->AddNewDetector(fdetector);
+	//SetSensitiveDetector(logicalPhantom, fdetector);
+	
+	//G4SDParticleFilter* gammaFilter = new G4SDParticleFilter("gammaFilter","gamma");
+	//fdetector->SetFilter(gammaFilter);
+
 
 	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
 	/*Visualization
@@ -203,7 +256,7 @@ void DetectorConstruction::setPhantomMaterial(G4String materialName)		//This fun
 	G4Material* pttoMaterial = G4Material::GetMaterial(materialName);  
 	if (pttoMaterial)
 	{
-		MaterialPhantom = pttoMaterial;
+	  TracerMaterial_Fe = pttoMaterial;
 		logicalPhantom->SetMaterial(pttoMaterial); 
 	}             
 }

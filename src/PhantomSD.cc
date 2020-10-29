@@ -11,6 +11,7 @@
 #include <G4TouchableHistory.hh>
 #include <G4SDManager.hh>
 #include <G4ios.hh>
+#include "G4Proton.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -45,11 +46,12 @@ PhantomHit* PhantomSD::createHit(G4Track* track) {
 	hit->SetMomentum(temp);
 	hit->SetParticleID(particle->GetPDGcode());
 
+
 	return hit;
 }
 
 
-G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
+G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*){
      	secondaries= step->GetfSecondary();
         TString mothername="";
         G4double mothermass=0;
@@ -71,21 +73,33 @@ G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
 							if(mothername.CompareTo("O16")==0 && itmap.second.first == 1 && itmap.second.second == 0) (*secondaries)[i]->SetKineticEnergy((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy()+0.085);
 							else if(mothername.CompareTo("C12")==0 && itmap.second.first == 2 && itmap.second.second == 1) (*secondaries)[i]->SetTrackStatus(fStopAndKill);
 						}
+					
 					}
 				}
 			}
 		}
 		for(size_t i=0;i< secondaries->size();i++){
-			if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()!=2212 & (*secondaries)[i]->GetDynamicParticle()->GetMass() < 4000){
+		  if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()==22){
 				PhantomHit* hit = createHit((*secondaries)[i]);
 				PhantomCollection->insert(hit);
 				(*secondaries)[i]->SetTrackStatus(fStopAndKill);
-			}
-		}        
+		  }
+		}
 	}
-	    // Create hit.
-        return true;
-
+	if(step->GetTrack()->GetDefinition()==G4Proton::Proton()){
+	  G4StepPoint* preStepPoint = step->GetPreStepPoint();
+	  const G4VProcess* currentProcess = preStepPoint->GetProcessDefinedStep();
+	  if(currentProcess!=0){ 
+	      G4String stepProcessName = currentProcess->GetProcessName();
+	      for(size_t i =0;i<secondaries->size();i++){
+		if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()==22){
+		  G4cout<<"Process: "<<stepProcessName<< "     Energy: " <<(*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy()<<G4endl;}}
+	  }
+	}
+       
+	
+		//Create hit
+		return true;
 }
 
 void PhantomSD::EndOfEvent(G4HCofThisEvent* hCof) {
