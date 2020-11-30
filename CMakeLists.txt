@@ -91,17 +91,7 @@ set(SPS_SCRIPTS
   macros/vis_SPS.mac
   macros/Run180MeV.mac
   macros/Viewer.mac
-  macros/Run6MeV.mac
-  macros/Run8MeV.mac
-  macros/Run10MeV.mac
-  macros/Run12MeV.mac
-  macros/Run15MeV.mac
-  macros/Run18MeV.mac
-  macros/Run20MeV.mac
-  macros/Run22MeV.mac
-  macros/Run25MeV.mac
-  macros/Run27MeV.mac
-  macros/Run30MeV.mac
+
   )
  
 
