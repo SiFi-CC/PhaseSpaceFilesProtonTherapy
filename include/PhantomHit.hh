@@ -30,9 +30,9 @@ public:
         
     G4double      GetEkin()            { return Ekin; };
     G4double      GetTime()            { return Time; };
-    G4int 	  GetParticleID()     { return ParticleID ;};
-    TVector3	  GetPosition()           { return Position; };
-    TVector3	  GetMomentum()           { return Momentum; };
+    G4int 	      GetParticleID()      { return ParticleID ;};
+    TVector3	  GetPosition()        { return Position; };
+    TVector3	  GetMomentum()        { return Momentum; };
 
 
 private:
