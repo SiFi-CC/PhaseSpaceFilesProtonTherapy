@@ -107,7 +107,7 @@ void HistoManager::SaveSecondaries(std::vector<G4int>* PDGcode, std::vector<G4do
 	ParticleEnergy = Ekin;
 	ParticleTime= Time;
 	ParticlePosition= pos;
-    	ParticleMomentum= dir;
+    ParticleMomentum= dir;
 	Secondaries->Fill();
 #endif 
 }
