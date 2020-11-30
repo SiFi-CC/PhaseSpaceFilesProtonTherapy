@@ -29,7 +29,7 @@ SPSEventAction::~SPSEventAction() {
 
 void SPSEventAction::BeginOfEventAction(const G4Event* evt) {
 	EventNo=GetEventno();
-//	std::cout << "Event no " << EventNo << std::endl;
+// std::cout << "Event no " << EventNo << std::endl;
 	Energy->clear();
 	Time->clear();
 	particleID->clear();
@@ -49,7 +49,7 @@ void SPSEventAction::EndOfEventAction(const G4Event* evt) {
 	
 	if (HCE){
 	int nPhantom=HCE->GetNumberOfCollections();	
-		//G4cout << "Number of Collections" << nScins << G4endl;
+	//G4cout << "Number of Collections" << nScins << G4endl;
 		for(int j=0;j<nPhantom;j++){
 
 			//G4cout << "Current Collection ID" << ScinID << G4endl;
