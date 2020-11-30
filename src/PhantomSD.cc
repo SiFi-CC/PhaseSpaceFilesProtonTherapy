@@ -62,7 +62,7 @@ G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
 				mothername=(*secondaries)[i]->GetDynamicParticle()->GetDefinition()->GetParticleName();
 			}
 		}
-		if(mothername.CompareTo("O16")==0 | mothername.CompareTo("C12")==0){
+		if(mothername.CompareTo("O16")==0 || mothername.CompareTo("C12")==0){
 			for(size_t i=0;i< secondaries->size();i++){
 				if((*secondaries)[i]->GetDynamicParticle()->GetDefinition()->GetParticleName()=="gamma"){
 					std::pair<G4int,G4int> level=std::pair<G4int,G4int>(0,0);
@@ -75,16 +75,16 @@ G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
 				}
 			}
 		}
-		for(size_t i=0;i< secondaries->size();i++){
-			if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()!=2212 & (*secondaries)[i]->GetDynamicParticle()->GetMass() < 4000){
-				PhantomHit* hit = createHit((*secondaries)[i]);
-				PhantomCollection->insert(hit);
-				(*secondaries)[i]->SetTrackStatus(fStopAndKill);
-			}
-		}        
 	}
-	    // Create hit.
-        return true;
+
+    // Create hit.
+	if((step->GetTrack()->GetDynamicParticle()->GetPDGcode()!=2212) & (step->GetTrack()->GetDynamicParticle()->GetMass() < 4000)){
+		PhantomHit* hit = createHit(step->GetTrack());
+		PhantomCollection->insert(hit);
+		step->GetTrack()->SetTrackStatus(fStopAndKill);
+	}
+
+	return true;
 
 }
 
