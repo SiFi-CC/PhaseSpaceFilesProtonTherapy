@@ -39,7 +39,7 @@ void DrawHistograms() {
 	// Create histograms for the values we read
 
 	// A histogram for the energies ranging from 0 MeV to 20 MeV with 200 bins
-	TH1F* hEnergy = new TH1F("hEnergy", ";E in MeV;#entries", 200, 0, 20);
+	TH1F* hEnergy = new TH1F("hEnergy", ";E in MeV;#entries", 20, 0, 20);
 
 	// A 2D histogram to display the particle positions in the xy-plane
 	// In both dimensions, the histogram ranges from -300 mm to 300 mm and has 600 bins
