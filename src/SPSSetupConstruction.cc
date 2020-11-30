@@ -10,6 +10,7 @@
 #include "G4SDManager.hh"
 
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -32,9 +33,8 @@
 #include "TVector3.h"
 
 #include "PhantomSD.hh"
-#include "G4SDParticleFilter.hh"
-#include "G4VPrimitiveScorer.hh"
-#include "G4MultiFunctionalDetector.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4PVPlacement.hh" 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -102,51 +102,112 @@ void DetectorConstruction::DefineMaterials()
 	mat_PMMA = nman->BuildMaterialWithNewDensity("PMMA","G4_PLEXIGLASS",1.19*g/cm3);
 	mat_POM = nman->BuildMaterialWithNewDensity("POM","G4_POLYOXYMETHYLENE",1.43 *g/cm3);
 	
-
-
+	G4double denPMMA = 1.19*g/cm3;
 
 	//Tracer Candidates
-	//Calcium
-	G4Element* Ca = new G4Element("Element_Calcium", "Ca", 20, 40.078*g/mole);
-	G4Material* matCa = new G4Material("Calcium", 1.55*g/cm3, 1, kStateSolid, 293.15*kelvin, 1.*atmosphere);
-	matCa->AddElement(Ca, 1);
 
 	//Magnesium
 	G4Element* Mg = new G4Element("Element_Magnesium", "Mg",12, 24.305*g/mole);
-	G4Material* matMg = new G4Material("Magnesium", 1.738*g/cm3, 1, kStateSolid, 293.15*kelvin, 1.*atmosphere);
+	G4Material* matMg = new G4Material("Magnesium", 1.738*g/cm3, 1);
 	matMg->AddElement(Mg, 1);
 
+
 	//Iron
-	G4Element* Fe = new G4Element("Element_Iron", "Fe", 26, 55.845*g/mole);
-	G4Material* matFe = new G4Material("Iron", 7.87*g/cm3, 1, kStateSolid, 293.15*kelvin, 1.*atmosphere);
+	G4Element* Fe = new G4Element("Element_Iron", "Fe", 26., 55.845*g/mole);
+	G4Material* matFe = new G4Material("Iron", 7.87*g/cm3,1);
 	matFe->AddElement(Fe, 1);
 
+	//Chrome
+	G4Element* Cr = new G4Element("Element_Chrome", "Cr", 24, 51.996*g/mole);
+	G4Material* matCr = new G4Material("Chrome", 7.14*g/cm3, 1);
+	matCr->AddElement(Cr, 1);
+
+	//Zirconium
+	G4Element* Zr = new G4Element("Element_Zirconium", "Zr", 40, 91.224*g/mole);
+	G4Material* matZr = new G4Material("Zirconium", 6.50*g/cm3, 1);
+	matZr->AddElement(Zr, 1);
+
+
+	//Titan 
+	G4Element* Ti = new G4Element("Element_Titan", "Ti", 22, 47.867*g/mole);
+	G4Material* matTi = new G4Material("Titan", 4.5*g/cm3, 1);
+	matTi->AddElement(Ti, 1);
+
+
 	//Tracer materials
-	//Mixture Calcium & PMMA
-        G4Material* Tracer_Ca = new G4Material("Tracer_Ca", 1.37*g/cm3, ncomps = 2);
-	Tracer_Ca->AddMaterial(mat_PMMA, fractionmass = 0.9);
-	Tracer_Ca->AddMaterial(matCa, fractionmass = 0.1);
 
 	//Mixture Magnesium & PMMA
-	G4Material* Tracer_Mg = new G4Material("Tracer_Mg", 1.464*g/cm3, ncomps = 2);
-	Tracer_Mg->AddMaterial(mat_PMMA, fractionmass = 0.88);
-	Tracer_Mg->AddMaterial(matMg, fractionmass = 0.12);
+	G4double denMg = 1.738*g/cm3;
+	G4double fracMassMg = 0.01;
+	G4double fracMassPMMA_Mg = 0.99;
+	G4double densityTracerMg = (denMg*denPMMA)/(fracMassMg*denPMMA+fracMassPMMA_Mg*denMg);
+
+	G4Material* Tracer_Mg = new G4Material("Tracer_Mg", densityTracerMg, ncomps = 2);
+	Tracer_Mg->AddMaterial(mat_PMMA, fractionmass = fracMassPMMA_Mg);
+	Tracer_Mg->AddMaterial(matMg, fractionmass = fracMassMg);
+
 
 	//Mixture Iron & PMMA
-	G4Material* Tracer_Fe = new G4Material("Tracer_Fe", 4.53*g/cm3, ncomps = 2);
-	Tracer_Fe->AddMaterial(mat_PMMA, fractionmass = 0.99);
-	Tracer_Fe->AddMaterial(matFe, fractionmass = 0.01);
+	G4double denFe = 7.87*g/cm3;
+	G4double fracMassFe = 0.025;
+	G4double fracMassPMMA_Fe = 0.975;
+	G4double densityTracerFe = (denFe*denPMMA)/(fracMassFe*denPMMA+fracMassPMMA_Fe*denFe);
+
+	G4Material* Tracer_Fe = new G4Material("Tracer_Fe", densityTracerFe, ncomps = 2);
+	Tracer_Fe->AddMaterial(mat_PMMA, fractionmass=fracMassPMMA_Fe);
+	Tracer_Fe->AddMaterial(matFe, fractionmass= fracMassFe);
+
+	//Mixture Cr  & PMMA
+	G4double denCr = 7.14*g/cm3;
+	G4double fracMassCr = 0.01;
+	G4double fracMassPMMA_Cr = 0.99;
+	G4double densityTracerCr = (denCr*denPMMA)/(fracMassCr*denPMMA+fracMassPMMA_Cr*denCr);
+
+	G4Material* Tracer_Cr = new G4Material("Tracer_Cr", densityTracerCr, ncomps = 2);
+	Tracer_Cr->AddMaterial(mat_PMMA, fractionmass= fracMassPMMA_Cr);
+	Tracer_Cr->AddMaterial(matCr, fractionmass= fracMassCr);
+
+	//Mixture Zr & PMMA
+	G4double denZr = 6.5*g/cm3;
+	G4double fracMassZr = 0.01;
+	G4double fracMassPMMA_Zr = 0.99;
+	G4double densityTracerZr = (denZr*denPMMA)/(fracMassZr*denPMMA+fracMassPMMA_Zr*denZr);
+
+	G4Material* Tracer_Zr = new G4Material("Tracer_Zr", densityTracerZr, ncomps = 2);
+	Tracer_Zr->AddMaterial(mat_PMMA, fractionmass = fracMassPMMA_Zr);
+	Tracer_Zr->AddMaterial(matZr, fractionmass = fracMassZr);
+       
+
+	//Mixture Ti & PMMA
+	G4double denTi = 4.5*g/cm3;
+	G4double fracMassTi = 0.015;
+	G4double fracMassPMMA_Ti = 0.985;
+	G4double densityTracerTi = (denTi*denPMMA)/(fracMassTi*denPMMA+fracMassPMMA_Ti*denTi);
+
+	G4Material* Tracer_Ti = new G4Material("Tracer_Ti", densityTracerTi, ncomps = 2);
+	Tracer_Ti->AddMaterial(mat_PMMA, fractionmass=fracMassPMMA_Ti);
+	Tracer_Ti->AddMaterial(matTi, fractionmass=fracMassTi);
 
 	G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 	
 	//variable materials accessed by macro commands are set to default here
 	MaterialPhantom= mat_PMMA;
-	TracerMaterial_Ca = matCa;
 	TracerMaterial_Mg = matMg;
 	TracerMaterial_Fe = matFe;
-	Tracer1 = Tracer_Ca;
-	Tracer2 = Tracer_Mg;
-	Tracer3 = Tracer_Fe;
+	TracerMaterial_Cr = matCr;
+	TracerMaterial_Zr = matZr;
+	TracerMaterial_Ti = matTi;
+     
+	Tracer1 = Tracer_Mg;
+	Tracer2 = Tracer_Fe;
+	Tracer3 = Tracer_Cr;
+	Tracer4 = Tracer_Zr;
+       	Tracer5 = Tracer_Ti;
+
+	
+	
+
+
         
 }
 
@@ -188,11 +249,20 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	G4Box* solidPhantom = new G4Box("solidPhantom",PhantomThicknessX/2,PhantomThicknessY/2,PhantomThicknessZ/2);
 
 	//construct
-	logicalPhantom = new G4LogicalVolume(solidPhantom,TracerMaterial_Fe,"logicalPhantom");	//default Material is PMMA 
+	logicalPhantom = new G4LogicalVolume(solidPhantom,MaterialPhantom,"logicalPhantom");	//default Material is PMMA 
 
 
 	physicalPhantom = new G4PVPlacement(0,G4ThreeVector(PhantomPlaceX,PhantomPlaceY,PhantomPlaceZ),"Phantom",logicalPhantom,physicWorld,false,0);
-
+	
+	G4double Rmin = 0.*mm;
+	G4double Rmax = 1.*mm;
+	G4double Lc = 3.*mm;
+	G4double StartPhi = 0.*deg;
+	G4double DeltaPhi = 360.*deg;
+	
+	G4Tubs* solidTracer = new G4Tubs("solidTracer",Rmin,Rmax,Lc/2, StartPhi, DeltaPhi);
+	G4LogicalVolume* logicalTracer = new G4LogicalVolume(solidTracer, TracerMaterial_Fe, "logicalTracer");
+	G4VPhysicalVolume* physicalTracer = new G4PVPlacement(0, G4ThreeVector(0,0,-7.5*cm), "Tracer", logicalTracer, physicalPhantom, false, 0);
 
 	PhantomSD* phsd = new PhantomSD("PhantomSD","PhantomHits");
       
@@ -200,12 +270,6 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	// Register Sensitive Detector to Geant4.
 	logicalPhantom->SetSensitiveDetector(phsd);
 
-	//G4MultiFunctionalDetector* fdetector = new G4MultiFunctionalDetector("fdetector");
-	//G4SDManager::GetSDMpointer()->AddNewDetector(fdetector);
-	//SetSensitiveDetector(logicalPhantom, fdetector);
-	
-	//G4SDParticleFilter* gammaFilter = new G4SDParticleFilter("gammaFilter","gamma");
-	//fdetector->SetFilter(gammaFilter);
 
 
 	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
@@ -233,6 +297,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	//logicWorld->SetVisAttributes(bleuCiel);
 
 	logicalPhantom ->SetVisAttributes(brown);
+	logicalTracer->SetVisAttributes(blue);
 
 
 	return physicWorld;
@@ -256,7 +321,7 @@ void DetectorConstruction::setPhantomMaterial(G4String materialName)		//This fun
 	G4Material* pttoMaterial = G4Material::GetMaterial(materialName);  
 	if (pttoMaterial)
 	{
-	  TracerMaterial_Fe = pttoMaterial;
+	  MaterialPhantom= pttoMaterial;
 		logicalPhantom->SetMaterial(pttoMaterial); 
 	}             
 }

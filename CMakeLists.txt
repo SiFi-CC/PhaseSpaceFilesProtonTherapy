@@ -24,9 +24,9 @@ message(STATUS "Found CXXCompiler version " ${CMAKE_CXX_COMPILER_VERSION})
 #
 option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 if(WITH_GEANT4_UIVIS)
-  find_package(Geant4 10.4.2 EXACT REQUIRED ui_all vis_all)
+  find_package(Geant4 10.6.2 EXACT REQUIRED ui_all vis_all)
 else()
-  find_package(Geant4 10.4.2 EXACT REQUIRED)
+  find_package(Geant4 10.6.2 EXACT REQUIRED)
 endif()
 
 message( STATUS "Found Geant4 version " ${Geant4_VERSION} )
@@ -91,6 +91,17 @@ set(SPS_SCRIPTS
   macros/vis_SPS.mac
   macros/Run180MeV.mac
   macros/Viewer.mac
+  macros/Run6MeV.mac
+  macros/Run8MeV.mac
+  macros/Run10MeV.mac
+  macros/Run12MeV.mac
+  macros/Run15MeV.mac
+  macros/Run18MeV.mac
+  macros/Run20MeV.mac
+  macros/Run22MeV.mac
+  macros/Run25MeV.mac
+  macros/Run27MeV.mac
+  macros/Run30MeV.mac
   )
  
 

@@ -27,12 +27,17 @@ public:
     void SetParticleID(G4int pid) { ParticleID = pid; };
     void SetPosition(TVector3 xyz){ Position.SetXYZ(xyz.X(),xyz.Y(),xyz.Z());};
     void SetMomentum(TVector3 xyz){ Momentum.SetXYZ(xyz.X(),xyz.Y(),xyz.Z());};
-        
+   
+    
     G4double      GetEkin()            { return Ekin; };
     G4double      GetTime()            { return Time; };
     G4int 	  GetParticleID()     { return ParticleID ;};
     TVector3	  GetPosition()           { return Position; };
     TVector3	  GetMomentum()           { return Momentum; };
+  
+   
+  
+ 
 
 
 private:
@@ -42,6 +47,10 @@ private:
     G4int         ParticleID;
     TVector3	  Position;
     TVector3	  Momentum;
+ 
+
+
+
 
 };
 

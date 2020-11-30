@@ -18,16 +18,23 @@ class SPSEventAction : public G4UserEventAction{
 		virtual void   EndOfEventAction(const G4Event*);
 		
 		G4int GetEventno();
-		
+
+                
 	private:
 		HistoManager* dataManager;
+  
 		
-    		int EventNo;    
+    		int EventNo;   
     		std::vector<double>* Energy;
     		std::vector<double>* Time;
     		std::vector<TVector3>* Position;
     		std::vector<TVector3>* Momentum;
 		std::vector<int>* particleID;
+               
+               
+               
+              
+             
 };
 
 #endif

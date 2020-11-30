@@ -19,8 +19,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class PhysicsList: public G4VUserPhysicsList
 
+
+class PhysicsList: public G4VUserPhysicsList
 {
 	public:
 		PhysicsList();
@@ -34,7 +35,13 @@ class PhysicsList: public G4VUserPhysicsList
 
 
 	private:
-		G4int VerboseLevel;
+                G4int VerboseLevel;
+             
+           
+ 
+       
+  
+
 		//  G4int OpVerbLevel;
 };
 

@@ -29,11 +29,12 @@ class HistoManager
     void book(G4int runNb);
     void save();
 
-    void SaveSecondaries(std::vector<G4int>* PDGcode, std::vector<G4double>* Ekin, std::vector<G4double>* Time, std::vector<TVector3>* pos, std::vector<TVector3>*  dir);
-    void IncreasePrimaries(); 
+  void SaveSecondaries(std::vector<G4int>* PDGcode, std::vector<G4double>* Ekin, std::vector<G4double>* Time, std::vector<TVector3>* pos, std::vector<TVector3>*  dir);
+  void IncreasePrimaries(); 
   private:
  
     DetectorConstruction* construction;
+  G4String fFileName;
  
     TFile*   rootFile;
     std::vector<int>* ParticlePDGcode;
@@ -41,14 +42,26 @@ class HistoManager
     std::vector<G4double>* ParticleTime;
     std::vector<TVector3>* ParticlePosition;
     std::vector<TVector3>* ParticleMomentum;
+  
+ 
+ 
+   
+  
+ 
+    
+ 
 	
     int Primaries;
+    int EventNo;
     TVector3* PPlace;
     TVector3* PDim;
 
+
     TTree* Info;
-	
+
+
     TTree*   Secondaries;
+   
 
 };
 

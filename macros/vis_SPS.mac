@@ -10,7 +10,7 @@
 /vis/viewer/set/style s
 #
 #
-################### Visualization commands
+################### Visualization command
 /tracking/storeTrajectory 1
 /vis/scene/add/trajectories
 /vis/scene/endOfEventAction accumulate
@@ -21,8 +21,10 @@
 #/vis/modeling/trajectories/drawByParticleID-0/set neutron magenta
 #
 #
+
+
 ################### source specifications
 /control/execute macros/Run180MeV.mac
 
 
-#/run/beamOn 100
+#/run/beamOn 500000

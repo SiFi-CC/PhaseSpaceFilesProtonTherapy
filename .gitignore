@@ -1,6 +1,8 @@
 Build
 images
-data
+Data
+src/SteppingAction.cc~
+include/SteppingAction.hh~
 condor_run_PSF_0mm.bash
 condor_run_PSF_0mm.bash~
 condor_submit.condor

@@ -31,6 +31,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         public:
            
            G4Material* GetMaterial(){return material;};
+      
           
 	private:
 
@@ -57,13 +58,17 @@ class DetectorConstruction : public G4VUserDetectorConstruction
                 
 		
 		G4Material* MaterialPhantom; //pointer to Phantom Material (default mat_PMMA)
-                G4Material* TracerMaterial_Ca;
                 G4Material* TracerMaterial_Mg;
                 G4Material* TracerMaterial_Fe;
+                G4Material* TracerMaterial_Cr;
+	        G4Material* TracerMaterial_Zr;
+	        G4Material* TracerMaterial_Ti;
                 G4Material* Tracer1;
                 G4Material* Tracer2;
                 G4Material* Tracer3;
-  
+                G4Material* Tracer4;
+                G4Material* Tracer5;
+
 
 		DetectorMessenger* detectorMessenger;
 

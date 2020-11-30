@@ -29,6 +29,8 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 	private:
 
 		G4GeneralParticleSource* particleGun;
+                std::vector<double>* primaryEnergy;
+  
 
 };
 

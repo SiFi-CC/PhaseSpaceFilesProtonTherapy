@@ -28,13 +28,20 @@ void DrawHistograms() {
 
 	// Create a TTreeReader for the tree by passing the TTree's name and the TFile it is in
 	TTreeReader myReader("Secondaries", myFile);
+	TTreeReader myReader("Info", myFile);
 
 	// Set variables to access the data in the tree
-
+	//Primaries
+	TTreeReaderValue<int> vPrimaries(myReader, "Primaries");
 	// The branch "ParticleEnergy" contains a vector<double>; access them as vEnergies
 	TTreeReaderValue<vector<double>> vEnergies(myReader, "ParticleEnergy");
 	// The branch "ParticlePosition" contains a vector<TVector3>; access them as vPositions
 	TTreeReaderValue<vector<TVector3>> vPositions(myReader, "ParticlePosition");
+	//The branch "ParticleTime" contains a vector<TVector3>; acess them as vTime
+	TTreeReaderValue<vector><TVector3>> vTime(myReader, "ParticleTime");
+
+	//cross-section
+	G4double crossSection = vTime/()
 
 	// Create histograms for the values we read
 

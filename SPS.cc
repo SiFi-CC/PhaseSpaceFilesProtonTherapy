@@ -1,6 +1,7 @@
 #include "G4RunManager.hh"
 #include "G4ScoringManager.hh" // scoring manager
 #include "G4UImanager.hh"
+#include "G4UIExecutive.hh"
 #include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
 
@@ -10,8 +11,8 @@
 
 //mandatory classes
 #include "SPSSetupConstruction.hh"
-//#include "PhysicsList.hh"
-//~ #include "QGSP_BIC_EMY.hh"
+#include "PhysicsList.hh"
+//#include "QGSP_BIC_HP.hh"
 #include "G4PhysListFactory.hh"
 #include "PrimaryGeneratorAction.hh"
 
@@ -24,13 +25,9 @@
 #include <string>
 #include <sstream>
 
-#ifdef G4VIS_USE
-#include "G4VisExecutive.hh"
-#endif
 
-#ifdef G4UI_USE
-#include "G4UIExecutive.hh"
-#endif
+#include "G4VisExecutive.hh"
+
 
 
 //std::ofstream output;
@@ -116,8 +113,9 @@ int main(int argc,char** argv) {
 	// set a histo manager
 	HistoManager*  histo = new HistoManager(detector);
 
-	//G4VUserPhysicsList* the_physics = new PhysicsList;
-	//runManager->SetUserInitialization(the_physics);  
+	//G4VUserPhysicsList* the_physics = new PhysicsList();
+	//runManager->SetUserInitialization(the_physics); 
+ 
 	G4PhysListFactory factory;
 	G4VModularPhysicsList* physlist = factory.GetReferencePhysList("QGSP_BIC_HP_EMZ");
 	runManager->SetUserInitialization(physlist);
@@ -137,20 +135,21 @@ int main(int argc,char** argv) {
 	//Initialize G4 kernel
 	runManager->Initialize();
 
-#ifdef G4VIS_USE
-	// visualization manager
-	G4VisManager* visManager = new G4VisExecutive;
-	// G4VisManager* visManager = new DetectorPhysVisManager; //old
-	visManager->Initialize();
-#endif
 
-	G4cout << "initialized visManager"<<G4endl;
+	// visualization manager
+	G4VisManager* visManager;
 	// get the pointer to the User Interface manager 
 	G4UImanager* UI = G4UImanager::GetUIpointer();  //old
-
-
 	if (!batch)   // Define UI session for interactive mode.
 	{
+	visManager = new G4VisExecutive;
+	// G4VisManager* visManager = new DetectorPhysVisManager; //old
+	visManager->Initialize();
+
+
+	G4cout << "initialized visManager"<<G4endl;
+
+
 		G4cout << "open interactive mode UI"<<G4endl;
 		G4UIExecutive* UI2 = new G4UIExecutive(argc, argv);
 		UI->ApplyCommand("/control/execute macros/vis_SPS.mac");    
@@ -165,9 +164,9 @@ int main(int argc,char** argv) {
 		UI->ApplyCommand(command+fileName);
 	}
 
-#ifdef G4VIS_USE
+
 	delete visManager;
-#endif
+
 	delete histo;
 	delete runManager;
 

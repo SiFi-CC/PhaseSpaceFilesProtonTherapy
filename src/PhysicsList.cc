@@ -12,6 +12,16 @@
 
 #include "PhysicsList.hh"
 #include "G4ParticleTypes.hh"
+#include "G4ParticleDefinition.hh"
+
+
+
+
+
+
+
+
+
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -29,6 +39,7 @@ PhysicsList::~PhysicsList()
 void PhysicsList::ConstructParticle()
 {
 	G4Electron::ElectronDefinition();
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -36,7 +47,9 @@ void PhysicsList::ConstructParticle()
 
 void PhysicsList::ConstructProcess()
 {
-	AddTransportation();
+  AddTransportation();  
+
+  
 }
 
 

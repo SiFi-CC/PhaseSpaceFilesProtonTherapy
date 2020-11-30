@@ -4,10 +4,12 @@
 
 /run/setCutForAGivenParticle e- 10 cm
 /run/setCutForAGivenParticle e+ 10 cm
-/run/setCutForAGivenParticle gamma 10 cm
+/run/setCutForAGivenParticle gamma  10 cm
 /run/setCutForAGivenParticle proton 0.001 mm
 
+
 /run/initialize
+
 
 /gps/particle proton
 /gps/direction 0 0 1
@@ -22,4 +24,6 @@
 /gps/ene/sigma 0.2 MeV
 
 
-/SPSSetUp/setPhantomThickness 368.2 mm
+#/SPSSetUp/setPhantomThickness 368.2 mm
+
+#/run/beamOn 20000

@@ -12,13 +12,15 @@
 #include <G4SDManager.hh>
 #include <G4ios.hh>
 #include "G4Proton.hh"
+#include "G4Gamma.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PhantomSD::PhantomSD(const G4String & name, const G4String & PhantomCollectionName):
-                G4VSensitiveDetector(name), PhantomCollection(NULL){
+  G4VSensitiveDetector(name), PhantomCollection(NULL){
         // Register name to the inherited collection.
         collectionName.push_back(PhantomCollectionName);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -34,7 +36,7 @@ void PhantomSD::Initialize(G4HCofThisEvent*) {
 
 PhantomHit* PhantomSD::createHit(G4Track* track) {
 	const G4DynamicParticle* particle = track->GetDynamicParticle();
-//	std::cout<< "HIt of " << particle->GetParticleDefinition()->GetParticleName() << " Code  " <<particle->GetPDGcode() << " Mass" << particle->GetMass() << std::endl;
+	//std::cout<< "HIt of " << particle->GetParticleDefinition()->GetParticleName() << " Code  " <<particle->GetPDGcode() << " Mass" << particle->GetMass() << std::endl;
 	TVector3 temp=TVector3(0,0,0);
 	// Create new hit.
 	PhantomHit* hit = new PhantomHit();
@@ -45,17 +47,22 @@ PhantomHit* PhantomSD::createHit(G4Track* track) {
 	temp.SetXYZ(track->GetMomentumDirection().x(),track->GetMomentumDirection().y(),track->GetMomentumDirection().z());
 	hit->SetMomentum(temp);
 	hit->SetParticleID(particle->GetPDGcode());
+	
 
 
 	return hit;
+
+	  
+	
 }
 
 
 G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*){
      	secondaries= step->GetfSecondary();
+
         TString mothername="";
         G4double mothermass=0;
-        if (secondaries->size()!=0 ){
+        /*if (secondaries->size()!=0){
 		photoev = (G4PhotonEvaporation*)(((G4ExcitationHandler*)(((G4VPreCompoundModel*)(G4HadronicInteractionRegistry::Instance()->FindModel("PRECO")))->GetExcitationHandler()))->GetPhotonEvaporation());
 		translevel= photoev->GetTransLevel();
 		for(size_t i=0;i< secondaries->size();i++){
@@ -77,7 +84,7 @@ G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*){
 					}
 				}
 			}
-		}
+			}*/
 		for(size_t i=0;i< secondaries->size();i++){
 		  if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()==22){
 				PhantomHit* hit = createHit((*secondaries)[i]);
@@ -85,19 +92,16 @@ G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*){
 				(*secondaries)[i]->SetTrackStatus(fStopAndKill);
 		  }
 		}
-	}
-	if(step->GetTrack()->GetDefinition()==G4Proton::Proton()){
-	  G4StepPoint* preStepPoint = step->GetPreStepPoint();
-	  const G4VProcess* currentProcess = preStepPoint->GetProcessDefinedStep();
-	  if(currentProcess!=0){ 
-	      G4String stepProcessName = currentProcess->GetProcessName();
-	      for(size_t i =0;i<secondaries->size();i++){
-		if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()==22){
-		  G4cout<<"Process: "<<stepProcessName<< "     Energy: " <<(*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy()<<G4endl;}}
-	  }
-	}
+		//	}
+
+
        
-	
+
+ 
+
+	 
+	  
+	  
 		//Create hit
 		return true;
 }

@@ -12,6 +12,7 @@ Time(0),
 ParticleID(0),
 Position(TVector3(0,0,0)),
 Momentum(TVector3(0,0,0))
+
 {
 }                       
                         
@@ -27,6 +28,9 @@ PhantomHit::PhantomHit(const PhantomHit& right){
 	ParticleID=right.ParticleID;
 	Position=right.Position;
 	Momentum=right.Momentum;
+
+
+
 }               
                 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
