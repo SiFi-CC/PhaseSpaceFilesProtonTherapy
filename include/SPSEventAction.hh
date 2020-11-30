@@ -10,7 +10,7 @@
 
 class SPSEventAction : public G4UserEventAction{
 	public:
-		SPSEventAction(HistoManager* histo );
+		SPSEventAction(HistoManager* histo);
 		virtual ~SPSEventAction();
 
 	public:
