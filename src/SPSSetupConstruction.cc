@@ -174,12 +174,12 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 	physicalPhantom = new G4PVPlacement(0,G4ThreeVector(PhantomPlaceX,PhantomPlaceY,PhantomPlaceZ),"Phantom", logicalPhantom, physicWorld,false,0);
 
 
-	PhantomSD* phsd = new PhantomSD("PhantomSD","Phantom2Hits"); 
+	PhantomSD* phsd = new PhantomSD("PhantomSD","Phantom2Hits"); // cysd 
 
 
 	// Register Sensitive Detector to Geant4.
-	G4SDManager::GetSDMpointer()->AddNewDetector(phsd);
-	logicalCylinder->SetSensitiveDetector(phsd);
+	G4SDManager::GetSDMpointer()->AddNewDetector(phsd); //cysd 
+	logicalCylinder->SetSensitiveDetector(phsd); //cysd
 
 	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...
 	/*Visualization
