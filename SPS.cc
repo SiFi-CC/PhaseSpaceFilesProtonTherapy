@@ -140,7 +140,7 @@ int main(int argc,char** argv) {
 	G4VisManager* visManager;
 	// get the pointer to the User Interface manager 
 	G4UImanager* UI = G4UImanager::GetUIpointer();  //old
-	if (!batch)   // Define UI session for interactive mode.
+	if (!batch)   // Define UI session for interactive mode
 	{
 	visManager = new G4VisExecutive;
 	// G4VisManager* visManager = new DetectorPhysVisManager; //old
