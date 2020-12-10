@@ -11,7 +11,6 @@
 #include "TTreeReaderValue.h"
 
 
-
 void DrawHistograms() {
 
 
@@ -35,53 +34,70 @@ void DrawHistograms() {
 	TTreeReaderValue<vector<double>> vEnergies(myReader, "ParticleEnergy");
 	// The branch "ParticlePosition" contains a vector<TVector3>; access them as vPositions
 	TTreeReaderValue<vector<TVector3>> vPositions(myReader, "ParticlePosition");
+   //The branch "ParticleID" contains a vector<int>; access them as vID
+   TTreeReaderValue<vector<int>> vPDGcode (myReader, "ParticleID"); //New ADD
 
 	// Create histograms for the values we read
 
 	// A histogram for the energies ranging from 0 MeV to 20 MeV with 200 bins
-	TH1F* hEnergy = new TH1F("hEnergy", ";E in MeV;#entries", 20, 0, 20);
+	TH1F* hEnergyAll = new TH1F("hEnergyAll", ";E in MeV;#entries", 20, 0, 20);
+	
+	TH1F* hEnergyElectron = new TH1F("hEnergyElectron", ";E in MeV;#entries", 20, 0, 20);
+	TH1F* hEnergyNeutron = new TH1F("hEnergyNeutron", ";E in MeV;#entries", 20, 0, 20);
+	TH1F* hEnergyGamma = new TH1F("hEnergyGamma", ";E in MeV;#entries", 20, 0, 20);
+				
 
 	// A 2D histogram to display the particle positions in the xy-plane
 	// In both dimensions, the histogram ranges from -300 mm to 300 mm and has 600 bins
 	TH2F* hPositionsXY = new TH2F("hPositionsXY", ";x-position in mm;y-position in mm", 600, -300, 300, 600, -300, 300);
+	
+	// A histogram for Particle ID ranging from 1 to 100  with 200 bins
+	TH1F* hPDGcode = new TH1F("hPDGcode", ";Number;#entries", 2500, 0, 2500); //New ADD
+	
+	
+	
 
 
 // READ THE TREE
-
+  
 	// Loop over all entries of the TTree.
 	while (myReader.Next()) {
-		// Access the data as if they were iterators (note the '*' in front of them):
-
-		// Iterate over all entries in the energy vector (this means over all particles within this event)
-		// and fill them into a histogram
-		for (auto dEnergy : *vEnergies) {
-			hEnergy->Fill(dEnergy);
-		}
-
-		// Iterate over all entries in the positions vector
-		// and fill the x- and y-component into a histogram
-		for (auto dPosition : *vPositions) {
-			hPositionsXY->Fill(dPosition.X(),dPosition.Y());
-		}
-
-	}
-
+		int energySize = vEnergies->size();
+		
+		for(int i = 0; i<energySize; ++i){
+			
+			double myEnergy= vEnergies->at(i);
+			int myPDG= vPDGcode->at(i);
+			TVector3 myPos = vPositions->at(i);
+			double myXPos = myPos.X();
+			double myYPos = myPos.Y();
+			
+			hEnergyAll->Fill(myEnergy);
+			if (myPDG==22){
+				hEnergyGamma->Fill(myEnergy);
+				hPositionsXY->Fill(myXPos,myYPos);
+				hPDGcode->Fill(myPDG);
+				}
+			//if (myPDG==11) hEnergyElectron->Fill(myEnergy);
+			//if (myPDG==2112) hEnergyNeutron->Fill(myEnergy);
+			}
+    } 
 
 // DRAW THE HISTOGRAMS
-
-
-	// Energy histogram
-
+	
+	// Energy Histogram
+	
 	// Create a canvas to draw into
 	TCanvas* cEnergy = new TCanvas();
 	// Change into this canvas (now it is the active one and everything drawn will end up in this canvas)
 	cEnergy->cd();
 	// Draw the histogram
-	hEnergy->Draw();
+	hEnergyGamma->Draw();
 	// Force an update of the graphical view
 	cEnergy->Update();
 	// Save the image as pdf
 	cEnergy->SaveAs("../images/EnergySpectrum.pdf");
+	
 
 
 	// Position histogram
@@ -91,4 +107,13 @@ void DrawHistograms() {
 	hPositionsXY->Draw();
 	cPositionsXY->Update();
 	cPositionsXY->SaveAs("../images/PositionsXY.pdf");
+	
+	// PDGCode histogram  ///New Add
+	
+	TCanvas* cPDGcode = new TCanvas();
+	cPDGcode->cd();
+	hPDGcode->Draw();
+	cPDGcode->Update();
+	cPDGcode->SaveAs("../images/ParticleID.pdf");
+	
 }
