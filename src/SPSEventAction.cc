@@ -22,6 +22,10 @@ EventNo(0)
 	particleID=new std::vector<int>;
 	Position = new std::vector<TVector3>;
 	Momentum = new std::vector<TVector3>;
+	CreatorProcess= new std::vector<std::string>;
+	MotherEnergy= new std::vector<double>;
+	MotherparticleID=new std::vector<int>;
+	MotherMomentum = new std::vector<TVector3>;
 }
 
 SPSEventAction::~SPSEventAction() {
@@ -35,6 +39,10 @@ void SPSEventAction::BeginOfEventAction(const G4Event* evt) {
 	particleID->clear();
 	Position->clear();
 	Momentum->clear();
+	CreatorProcess->clear();
+	MotherEnergy->clear();
+	MotherparticleID->clear();
+	MotherMomentum->clear();
 	dataManager->IncreasePrimaries();
 }
 
@@ -64,8 +72,12 @@ void SPSEventAction::EndOfEventAction(const G4Event* evt) {
 					particleID->push_back((*SHC)[i]->GetParticleID());
 					Position->push_back((*SHC)[i]->GetPosition());
 					Momentum->push_back((*SHC)[i]->GetMomentum());
+					CreatorProcess->push_back((*SHC)[i]->GetCreatorProcess());
+					MotherEnergy->push_back((*SHC)[i]->GetMotherEkin());
+					MotherparticleID->push_back((*SHC)[i]->GetMotherParticleID());
+					MotherMomentum->push_back((*SHC)[i]->GetMotherMomentum());
 				}
-				if(phantom_hit!=0)dataManager->SaveSecondaries(particleID,Energy,Time,Position,Momentum);
+				if(phantom_hit!=0)dataManager->SaveSecondaries(particleID,Energy,Time,Position,Momentum,CreatorProcess,MotherparticleID,MotherEnergy,MotherMomentum);
 			}
 
 

@@ -17,6 +17,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{ROOTSYS} ${CMAKE_CURRENT_SOURCE_
 message(STATUS "Found CXXCompiler version " ${CMAKE_CXX_COMPILER_VERSION})
 
 
+SET(GEANT4_VERSION 10.4.2 CACHE STRING "specifies the version of geant4 that is required")
+message(STATUS "Geant Version is " ${GEANT4_VERSION})
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
@@ -24,13 +26,12 @@ message(STATUS "Found CXXCompiler version " ${CMAKE_CXX_COMPILER_VERSION})
 #
 option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 if(WITH_GEANT4_UIVIS)
-  find_package(Geant4 10.4.2 EXACT REQUIRED ui_all vis_all)
+  find_package(Geant4 ${GEANT4_VERSION} EXACT REQUIRED ui_all vis_all)
 else()
-  find_package(Geant4 10.4.2 EXACT REQUIRED)
+  find_package(Geant4 ${GEANT4_VERSION} EXACT REQUIRED)
 endif()
 
 message( STATUS "Found Geant4 version " ${Geant4_VERSION} )
-
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
@@ -55,7 +56,8 @@ include_directories(${ROOT_INCLUDE_DIRS} )
 #---------------------------------------------------------------------------
 #create extra libraries
 
-MAKE_ROOT_DICT(DICTNAME stdfile LINKDEF include/stdLinkDef.h SOURCES src/HistoManager.cc INCLUDES include/stdinclude.hh LIBRARIES ${ROOT_LIBRARIES})
+#MAKE_ROOT_DICT(DICTNAME stdfile LINKDEF include/stdLinkDef.h SOURCES src/HistoManager.cc INCLUDES include/stdinclude.hh LIBRARIES ${ROOT_LIBRARIES})
+MAKE_ROOT_DICT(DICTNAME stdfile LINKDEF include/stdLinkDef.h INCLUDES include/stdinclude.hh LIBRARIES ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project

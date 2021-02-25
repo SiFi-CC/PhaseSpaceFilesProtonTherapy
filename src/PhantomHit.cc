@@ -11,7 +11,11 @@ Ekin(0),
 Time(0),
 ParticleID(0),
 Position(TVector3(0,0,0)),
-Momentum(TVector3(0,0,0))
+Momentum(TVector3(0,0,0)),
+CreatorProcess(""),
+MotherEkin(0),
+MotherParticleID(0),
+MotherMomentum(TVector3(0,0,0))
 {
 }                       
                         
@@ -27,6 +31,10 @@ PhantomHit::PhantomHit(const PhantomHit& right){
 	ParticleID=right.ParticleID;
 	Position=right.Position;
 	Momentum=right.Momentum;
+	CreatorProcess=right.CreatorProcess;
+	MotherEkin=right.MotherEkin;
+	MotherParticleID=right.MotherParticleID;
+	MotherMomentum=right.MotherMomentum;
 }               
                 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -38,5 +46,20 @@ const PhantomHit& PhantomHit::operator=(const PhantomHit& right){
 	ParticleID=right.ParticleID;
 	Position=right.Position;
 	Momentum=right.Momentum;
+	CreatorProcess=right.CreatorProcess;
+	MotherEkin=right.MotherEkin;
+	MotherParticleID=right.MotherParticleID;
+	MotherMomentum=right.MotherMomentum;
         return *this;
+}
+void PhantomHit::Print(){
+	std::cout << "Ekin " << Ekin << std::endl;
+	std::cout << "Time " << Time << std::endl;
+	std::cout << "ParticleId " << ParticleID << std::endl;
+	std::cout << "Process of creation " << CreatorProcess<< std::endl;
+	std::cout << "Position " << Position.X() << ", " << Position.Y() << ", " << Position.Z() << std::endl;
+	std::cout << "Momentum " << Momentum.X() << ", " << Momentum.Y() << ", " << Momentum.Z() << std::endl;
+	std::cout << "MotherEkin " << MotherEkin << std::endl;
+	std::cout << "MotherParticleId " << MotherParticleID << std::endl;
+	std::cout << "MotherMomentum " << MotherMomentum.X() << ", " << MotherMomentum.Y() << ", " << MotherMomentum.Z() << std::endl;
 }

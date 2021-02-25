@@ -27,7 +27,11 @@ class SPSEventAction : public G4UserEventAction{
     		std::vector<double>* Time;
     		std::vector<TVector3>* Position;
     		std::vector<TVector3>* Momentum;
+    		std::vector<std::string>* CreatorProcess;
 		std::vector<int>* particleID;
+    		std::vector<double>* MotherEnergy;
+    		std::vector<TVector3>* MotherMomentum;
+		std::vector<int>* MotherparticleID;
 };
 
 #endif

@@ -31,20 +31,27 @@ void PhantomSD::Initialize(G4HCofThisEvent*) {
         PhantomCollection = new PhantomHitsCollection(SensitiveDetectorName, collectionName[0]);
 }
 
-PhantomHit* PhantomSD::createHit(G4Track* track) {
+PhantomHit* PhantomSD::createHit(G4Track* track, G4Step* mother) {
 	const G4DynamicParticle* particle = track->GetDynamicParticle();
+	const G4DynamicParticle* motherparticle = mother->GetTrack()->GetDynamicParticle();
 //	std::cout<< "HIt of " << particle->GetParticleDefinition()->GetParticleName() << " Code  " <<particle->GetPDGcode() << " Mass" << particle->GetMass() << std::endl;
 	TVector3 temp=TVector3(0,0,0);
 	// Create new hit.
 	PhantomHit* hit = new PhantomHit();
 	hit->SetEkin(track->GetKineticEnergy());
+	hit->SetCreatorProcess(track->GetCreatorProcess()->GetProcessName());
 	hit->SetTime(track->GetGlobalTime());
-	temp.SetXYZ(track->GetPosition().x(),track->GetPosition().y(),track->GetPosition().z());
+	temp.SetXYZ(mother->GetPostStepPoint()->GetPosition().x(),mother->GetPostStepPoint()->GetPosition().y(),mother->GetPostStepPoint()->GetPosition().z());
 	hit->SetPosition(temp);
 	temp.SetXYZ(track->GetMomentumDirection().x(),track->GetMomentumDirection().y(),track->GetMomentumDirection().z());
 	hit->SetMomentum(temp);
 	hit->SetParticleID(particle->GetPDGcode());
+	hit->SetMotherParticleID(motherparticle->GetPDGcode());
+	hit->SetMotherEkin(mother->GetTrack()->GetKineticEnergy());
+	temp.SetXYZ(mother->GetPostStepPoint()->GetMomentumDirection().x(),mother->GetPostStepPoint()->GetMomentumDirection().y(),mother->GetPostStepPoint()->GetMomentumDirection().z());
+	hit->SetMotherMomentum(temp);
 
+//	hit->Print();
 	return hit;
 }
 
@@ -56,7 +63,7 @@ G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
         if (secondaries->size()!=0 ){
 		for(size_t i=0;i< secondaries->size();i++){
 			if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()!=2212 & (*secondaries)[i]->GetDynamicParticle()->GetMass() < 4000){
-				PhantomHit* hit = createHit((*secondaries)[i]);
+				PhantomHit* hit = createHit((*secondaries)[i],step);
 				PhantomCollection->insert(hit);
 				(*secondaries)[i]->SetTrackStatus(fStopAndKill);
 			}

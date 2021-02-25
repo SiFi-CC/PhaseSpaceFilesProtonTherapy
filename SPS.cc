@@ -13,6 +13,7 @@
 //#include "PhysicsList.hh"
 //~ #include "QGSP_BIC_EMY.hh"
 #include "G4PhysListFactory.hh"
+#include "G4HadronicParameters.hh"
 #include "PrimaryGeneratorAction.hh"
 
 //optional UserActionclasses
@@ -24,13 +25,9 @@
 #include <string>
 #include <sstream>
 
-#ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
-#endif
 
-#ifdef G4UI_USE
 #include "G4UIExecutive.hh"
-#endif
 
 
 //std::ofstream output;
@@ -98,6 +95,12 @@ int main(int argc,char** argv) {
 		CLHEP::HepRandom::setTheEngine(new CLHEP::RanluxEngine);
 	}
 
+/*
+	G4HadronicParameters* param = G4HadronicParameters::Instance();
+	param->SetApplyFactorXS(true);
+   	param->SetXSFactorNucleonElastic(2);
+   	param->SetXSFactorNucleonInelastic(2);
+*/
 	// choose the Random engine
 	//HepRandom::setTheEngine(new RanecuEngine);
 
@@ -137,12 +140,10 @@ int main(int argc,char** argv) {
 	//Initialize G4 kernel
 	runManager->Initialize();
 
-#ifdef G4VIS_USE
 	// visualization manager
 	G4VisManager* visManager = new G4VisExecutive;
 	// G4VisManager* visManager = new DetectorPhysVisManager; //old
 	visManager->Initialize();
-#endif
 
 	G4cout << "initialized visManager"<<G4endl;
 	// get the pointer to the User Interface manager 
@@ -162,12 +163,11 @@ int main(int argc,char** argv) {
 		G4cout << "open batch mode UI"<<G4endl;
 		G4String command = "/control/execute ";
 		G4String fileName = argv[1];
+		std::cout << "macro name " << fileName << std::endl;
 		UI->ApplyCommand(command+fileName);
 	}
 
-#ifdef G4VIS_USE
 	delete visManager;
-#endif
 	delete histo;
 	delete runManager;
 

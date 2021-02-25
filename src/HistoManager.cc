@@ -24,8 +24,12 @@ HistoManager::HistoManager(DetectorConstruction* dec)
 	ParticlePosition = new std::vector<TVector3>;
 	ParticleMomentum =  new std::vector<TVector3>;
 	ParticlePDGcode=  new std::vector<int>;
+	ParticleCreatorProcess=  new std::vector<std::string>;
 	ParticleEnergy =  new std::vector<double>;
 	ParticleTime =  new std::vector<double>;
+	MotherParticleMomentum =  new std::vector<TVector3>;
+	MotherParticlePDGcode=  new std::vector<int>;
+	MotherParticleEnergy =  new std::vector<double>;
 	PPlace = new TVector3(0,0,0);
 	PDim = new TVector3(0,0,0);
 }
@@ -73,8 +77,12 @@ void HistoManager::book(G4int runNb)
 	Secondaries->Branch("ParticleID"     , &ParticlePDGcode  );
 	Secondaries->Branch("ParticleTime"     , &ParticleTime);
 	Secondaries->Branch("ParticleEnergy"     , &ParticleEnergy  );
+	Secondaries->Branch("ParticleCreatorProcess"     , &ParticleCreatorProcess);
 	Secondaries->Branch("ParticlePosition"     , &ParticlePosition  ); 
 	Secondaries->Branch("ParticleMomentum"     , &ParticleMomentum ); 
+	Secondaries->Branch("MotherParticleID"     , &MotherParticlePDGcode  );
+	Secondaries->Branch("MotherParticleEnergy"     , &MotherParticleEnergy  );
+	Secondaries->Branch("MotherParticleMomentum"     , &MotherParticleMomentum ); 
 	
 #endif
 	PPlace->SetXYZ(construction->getPhantomPlace()->x(),construction->getPhantomPlace()->y(),construction->getPhantomPlace()->z());
@@ -101,13 +109,17 @@ void HistoManager::save()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 
-void HistoManager::SaveSecondaries(std::vector<G4int>* PDGcode, std::vector<G4double>* Ekin, std::vector<G4double>* Time, std::vector<TVector3>* pos, std::vector<TVector3>*  dir){
+void HistoManager::SaveSecondaries(std::vector<G4int>* PDGcode, std::vector<G4double>* Ekin, std::vector<G4double>* Time, std::vector<TVector3>* pos, std::vector<TVector3>*  dir,std::vector<std::string>* process,std::vector<G4int>* motherPDGcode, std::vector<G4double>* motherEkin, std::vector<TVector3>*  motherdir){
 #ifdef G4ANALYSIS_USE
 	ParticlePDGcode = PDGcode;
 	ParticleEnergy = Ekin;
 	ParticleTime= Time;
 	ParticlePosition= pos;
     	ParticleMomentum= dir;
+    	ParticleCreatorProcess= process;
+	MotherParticlePDGcode = motherPDGcode;
+	MotherParticleEnergy = motherEkin;
+    	MotherParticleMomentum= motherdir;
 	Secondaries->Fill();
 #endif 
 }
