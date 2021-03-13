@@ -64,6 +64,7 @@ G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
      	secondaries= step->GetfSecondary();
 	currentsecs= step->GetSecondaryInCurrentStep ();
         int currentsize=currentsecs->size();
+	std::map<int,int> notused;
 	TString mothername="";
         G4double mothermass=0;
         if (currentsize!=0 ){
@@ -89,15 +90,20 @@ G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
 					}
 //					if((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() >3.15 && (*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() < 3.25)std::cout << mothername.Data() << "from " << level.first << " to " << level.second << std::endl;
 					if(mothername.CompareTo("O16")==0 && level.first == 1 && level.second == 0) (*secondaries)[i]->SetKineticEnergy((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy()+0.085);
-					else if(mothername.CompareTo("C12")==0 && level.first == 2 && level.second == 1) (*secondaries)[i]->SetTrackStatus(fStopAndKill);
+					else if(mothername.CompareTo("C12")==0 && level.first == 2 && level.second == 1){
+						(*secondaries)[i]->SetTrackStatus(fStopAndKill);
+						notused[i]=1;
+					}
 				}
 			}
 		}
 		for(size_t i=(secondaries->size()-currentsize);i< secondaries->size();i++){
 			if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()!=2212){
 				if((*secondaries)[i]->GetDynamicParticle()->GetMass() < 4000){
-					PhantomHit* hit = createHit((*secondaries)[i],step);
-					PhantomCollection->insert(hit);
+					if(notused.find(i)==notused.end()){
+						PhantomHit* hit = createHit((*secondaries)[i],step);
+						PhantomCollection->insert(hit);
+					}
 				}
 				(*secondaries)[i]->SetTrackStatus(fStopAndKill);
 			}
