@@ -31,7 +31,7 @@ void PhantomSD::Initialize(G4HCofThisEvent*) {
         PhantomCollection = new PhantomHitsCollection(SensitiveDetectorName, collectionName[0]);
 }
 
-PhantomHit* PhantomSD::createHit(G4Track* track) {
+PhantomHit* PhantomSD::createHit(G4Track* track,G4Step* step) {
 	const G4DynamicParticle* particle = track->GetDynamicParticle();
 //	std::cout<< "HIt of " << particle->GetParticleDefinition()->GetParticleName() << " Code  " <<particle->GetPDGcode() << " Mass" << particle->GetMass() << std::endl;
 	TVector3 temp=TVector3(0,0,0);
@@ -40,7 +40,18 @@ PhantomHit* PhantomSD::createHit(G4Track* track) {
 	hit->SetEkin(track->GetKineticEnergy());
 	hit->SetTime(track->GetGlobalTime());
 	temp.SetXYZ(track->GetPosition().x(),track->GetPosition().y(),track->GetPosition().z());
-	hit->SetPosition(temp);
+/*	if(std::abs(temp.x())>150. || std::abs(temp.x())>150. ){
+		std::cout << "particle " << particle->GetPDGcode() << std::endl;
+		std::cout << "ekin " << track->GetKineticEnergy() << std::endl;
+		std::cout << "Process " << track->GetCreatorProcess()->GetProcessName() << std::endl;
+		std::cout << "track pos " << track->GetPosition() << std::endl;
+		std::cout << "track Volume " << track->GetVolume()->GetName() << std::endl;
+		std::cout << "step post " << step->GetPostStepPoint()->GetPosition() << std::endl;
+		std::cout << "step pre " << step->GetPreStepPoint()->GetPosition() << std::endl;
+		std::cout << "Volume" << step->GetTrack()->GetVolume()->GetName() << std::endl;
+
+	}
+*/	hit->SetPosition(temp);
 	temp.SetXYZ(track->GetMomentumDirection().x(),track->GetMomentumDirection().y(),track->GetMomentumDirection().z());
 	hit->SetMomentum(temp);
 	hit->SetParticleID(particle->GetPDGcode());
@@ -51,34 +62,43 @@ PhantomHit* PhantomSD::createHit(G4Track* track) {
 
 G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
      	secondaries= step->GetfSecondary();
-        TString mothername="";
+	currentsecs= step->GetSecondaryInCurrentStep ();
+        int currentsize=currentsecs->size();
+	TString mothername="";
         G4double mothermass=0;
-        if (secondaries->size()!=0 ){
+        if (currentsize!=0 ){
 		photoev = (G4PhotonEvaporation*)(((G4ExcitationHandler*)(((G4VPreCompoundModel*)(G4HadronicInteractionRegistry::Instance()->FindModel("PRECO")))->GetExcitationHandler()))->GetPhotonEvaporation());
 		translevel= photoev->GetTransLevel();
-		for(size_t i=0;i< secondaries->size();i++){
+		for(size_t i=(secondaries->size()-currentsize);i< secondaries->size();i++){
 			if((*secondaries)[i]->GetDynamicParticle()->GetMass()>mothermass){
 				mothermass=(*secondaries)[i]->GetDynamicParticle()->GetMass();
 				mothername=(*secondaries)[i]->GetDynamicParticle()->GetDefinition()->GetParticleName();
 			}
 		}
 		if(mothername.CompareTo("O16")==0 | mothername.CompareTo("C12")==0){
-			for(size_t i=0;i< secondaries->size();i++){
+			for(size_t i=(secondaries->size()-currentsize);i< secondaries->size();i++){
 				if((*secondaries)[i]->GetDynamicParticle()->GetDefinition()->GetParticleName()=="gamma"){
+//					std::cout << "gamma with " << (*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() << std::endl;
 					std::pair<G4int,G4int> level=std::pair<G4int,G4int>(0,0);
+					double smallestdiff=1e9;
 					for(auto itmap : translevel){
-						if(itmap.first> ((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() -0.005) && itmap.first< ((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() +0.005)){
-							if(mothername.CompareTo("O16")==0 && itmap.second.first == 1 && itmap.second.second == 0) (*secondaries)[i]->SetKineticEnergy((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy()+0.085);
-							else if(mothername.CompareTo("C12")==0 && itmap.second.first == 2 && itmap.second.second == 1) (*secondaries)[i]->SetTrackStatus(fStopAndKill);
-						}
+						if(TMath::Abs(itmap.first-(*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy())<smallestdiff){
+							level =itmap.second;
+        	                                        smallestdiff=TMath::Abs(itmap.first-(*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy());
+                	                        }
 					}
+//					if((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() >3.15 && (*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() < 3.25)std::cout << mothername.Data() << "from " << level.first << " to " << level.second << std::endl;
+					if(mothername.CompareTo("O16")==0 && level.first == 1 && level.second == 0) (*secondaries)[i]->SetKineticEnergy((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy()+0.085);
+					else if(mothername.CompareTo("C12")==0 && level.first == 2 && level.second == 1) (*secondaries)[i]->SetTrackStatus(fStopAndKill);
 				}
 			}
 		}
-		for(size_t i=0;i< secondaries->size();i++){
-			if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()!=2212 & (*secondaries)[i]->GetDynamicParticle()->GetMass() < 4000){
-				PhantomHit* hit = createHit((*secondaries)[i]);
-				PhantomCollection->insert(hit);
+		for(size_t i=(secondaries->size()-currentsize);i< secondaries->size();i++){
+			if((*secondaries)[i]->GetDynamicParticle()->GetPDGcode()!=2212){
+				if((*secondaries)[i]->GetDynamicParticle()->GetMass() < 4000){
+					PhantomHit* hit = createHit((*secondaries)[i],step);
+					PhantomCollection->insert(hit);
+				}
 				(*secondaries)[i]->SetTrackStatus(fStopAndKill);
 			}
 		}        

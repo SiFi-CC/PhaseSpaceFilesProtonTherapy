@@ -10,6 +10,7 @@
 #include "G4SDManager.hh"
 
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -38,7 +39,7 @@ DetectorConstruction::DetectorConstruction()
 :logicWorld(0),physicWorld(0),logicalPhantom(0),physicalPhantom(0)
 
 {   //changable variables in SetUp
-	PhantomThicknessX	= 6.*cm;	
+	PhantomThicknessX	= 15.*cm;	
 	PhantomThicknessY	= 6.*cm;	
 	PhantomThicknessZ	= 30.*cm;	
 
@@ -139,7 +140,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSetUp()
 
 	//Phantom 
 
-	G4Box* solidPhantom = new G4Box("solidPhantom",PhantomThicknessX/2,PhantomThicknessY/2,PhantomThicknessZ/2);
+	G4Tubs* solidPhantom = new G4Tubs("solidPhantom",0,PhantomThicknessX,PhantomThicknessZ/2,0,360*degree);
 
 	//construct
 	logicalPhantom = new G4LogicalVolume(solidPhantom,MaterialPhantom,"logicalPhantom");	//default Material is PMMA 

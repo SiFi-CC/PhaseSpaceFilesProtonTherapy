@@ -55,7 +55,7 @@ include_directories(${ROOT_INCLUDE_DIRS} )
 #---------------------------------------------------------------------------
 #create extra libraries
 
-MAKE_ROOT_DICT(DICTNAME stdfile LINKDEF include/stdLinkDef.h SOURCES src/HistoManager.cc INCLUDES include/stdinclude.hh LIBRARIES ${ROOT_LIBRARIES})
+MAKE_ROOT_DICT(DICTNAME stdfile LINKDEF include/stdLinkDef.h SOURCES INCLUDES include/stdinclude.hh LIBRARIES ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
@@ -90,6 +90,7 @@ target_link_libraries(SPS stdfile ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} )
 set(SPS_SCRIPTS
   macros/vis_SPS.mac
   macros/Run180MeV.mac
+  macros/Run130MeV.mac
   macros/Viewer.mac
   )
  
