@@ -1,5 +1,3 @@
-
-
 #include "TFile.h"
 #include "TH1F.h"
 #include "TCanvas.h"
