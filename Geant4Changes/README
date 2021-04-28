@@ -1,0 +1,6 @@
+The files in this directory are from Geant4 version 10.4.2 and where modified in such a way that the process which produces the gamma can be accessed in the user code. To also enable this you need to do:
+WARNING: ONLY VALID FOR 10.4.2 (it might be also possible for other versions to use this code but that has no been tested.)
+	- Copy the files in the include directory into ${GEANT10.4.2SOURCECODEDIRECTORY}/source/processes/hadronic/models/de_excitation/photon_evaporation/include/
+	- Copy the files in the src directory into ${GEANT10.4.2SOURCECODEDIRECTORY}/source/processes/hadronic/models/de_excitation/photon_evaporation/src/
+	- Rebuild you Geant4 with make
+
