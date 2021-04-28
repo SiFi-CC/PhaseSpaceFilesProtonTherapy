@@ -61,35 +61,45 @@ PhantomHit* PhantomSD::createHit(G4Track* track,G4Step* step) {
 
 
 G4bool PhantomSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
-     	secondaries= step->GetfSecondary();
+	//All secondaries from this track     
+	secondaries= step->GetfSecondary();
+	//Secondaries in this step
 	currentsecs= step->GetSecondaryInCurrentStep ();
         int currentsize=currentsecs->size();
 	std::map<int,int> notused;
 	TString mothername="";
         G4double mothermass=0;
         if (currentsize!=0 ){
+		//Getting the photonevaporation manager
 		photoev = (G4PhotonEvaporation*)(((G4ExcitationHandler*)(((G4VPreCompoundModel*)(G4HadronicInteractionRegistry::Instance()->FindModel("PRECO")))->GetExcitationHandler()))->GetPhotonEvaporation());
+		//Getting the transition levels of this step (modified geant4 code)
 		translevel= photoev->GetTransLevel();
+		//Start parametes of this loop so that only the secondaries of the current step are analyzed
 		for(size_t i=(secondaries->size()-currentsize);i< secondaries->size();i++){
+			//Finding the heaviest secondary ( the nucleus)	
 			if((*secondaries)[i]->GetDynamicParticle()->GetMass()>mothermass){
 				mothermass=(*secondaries)[i]->GetDynamicParticle()->GetMass();
 				mothername=(*secondaries)[i]->GetDynamicParticle()->GetDefinition()->GetParticleName();
 			}
 		}
+		//Only for these Nucleii the prompt gamma need to be modified
 		if(mothername.CompareTo("O16")==0 | mothername.CompareTo("C12")==0){
 			for(size_t i=(secondaries->size()-currentsize);i< secondaries->size();i++){
+				//Getting the secondaries that are actual gammas
 				if((*secondaries)[i]->GetDynamicParticle()->GetDefinition()->GetParticleName()=="gamma"){
-//					std::cout << "gamma with " << (*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() << std::endl;
 					std::pair<G4int,G4int> level=std::pair<G4int,G4int>(0,0);
 					double smallestdiff=1e9;
+					//Looping trhough all generated transitions ( there can be several)
 					for(auto itmap : translevel){
+						//Here a direct comparison of the energy from the seconady and the GetTransLevel is not possible since the lorentzboost is done after the generation of the translevels, Hence the gamma which has the smallest difference to the energy from the TransLevels is assigned to the corresponding translevels.
 						if(TMath::Abs(itmap.first-(*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy())<smallestdiff){
 							level =itmap.second;
         	                                        smallestdiff=TMath::Abs(itmap.first-(*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy());
                 	                        }
 					}
-//					if((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() >3.15 && (*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy() < 3.25)std::cout << mothername.Data() << "from " << level.first << " to " << level.second << std::endl;
+					//Moving the unphysical O16 Peak from 1 to 0 transition to the 6.13 peak
 					if(mothername.CompareTo("O16")==0 && level.first == 1 && level.second == 0) (*secondaries)[i]->SetKineticEnergy((*secondaries)[i]->GetDynamicParticle()->GetKineticEnergy()+0.085);
+					// removing the 3.15 peak completely
 					else if(mothername.CompareTo("C12")==0 && level.first == 2 && level.second == 1){
 						(*secondaries)[i]->SetTrackStatus(fStopAndKill);
 						notused[i]=1;
